@@ -1,0 +1,56 @@
+
+0907 TIL SQL 6강
+25명씩 분반수업 할 예정 - 실습할때
+
+ER => relation
+정규화 
+하나의 객체를 하나의 릴레이션으로 맵핑
+데이터를 디스크로 실어날려야한다
+자주사용하는 것과 가끔사용하는 것을 구분한다
+
+relation.
+
+P- 6-65
+View Ridge Gallrrery
+ㄷㅕ
+Application Requirements
+View Ridge application Requirements
+Track customers and thir artist interests
+
+P- 6-67
+View Ridge Data Model
+
+Transition  작품을 사고 팔다
+작품이 없는 화가만의 정보도 있을 수 있다. minimum
+
+minimuM 1
+1개 이상 작품을 사고 팔아야 한다
+미니멈 카디널러티 one one 이 가장 어렵다
+
+MO관계는 구ㅕㄴ하기 쉽다. 낫널
+MM은 구현하기 어렵다
+
+relation mapping
+아티스트 기본키는 name
+one to maping 은 worker 가 약한 객체이기 때문에
+트렉직션은 아주 복잡해졌다
+
+오후13시ㅉㄴㄴㄴ
+ALATER statement
+
+칼럼의 타입만 바꾸고 싶다. alter talbe alter color 
+
+
+
+tpc
+
+트랜젝선 처리 성능 평의회로 비영리단체
+OLTP 시스템 처리성능 측정
+
+벤치마크 테스트로 TPC-alphabet으로 표기
+1989년 TPC-A를 시작
+
+TPC-H
+
+TPC_H벤치마크는 의사결정지원시스템의 성능테스트를위해 개발
+8개 테이즐 22개 쿼리 , 쿼리스키마로 성능평가

@@ -1,0 +1,598 @@
+
+PAGE 3-2
+
+데이터 모델 : 실세계(real data)를 capture하는 방법(도구)
+개념적 데이터 모델 : 우리가 흔히 생각하는 데이터
+    * ER 모델 : 엔티디와 엔티디 간의 관계로 데이터의 relationship을 표시한다
+                현실세계에서 ER모델을 하면 case 도구를 사용하여 작업하는 부분이 편리하다
+    semantic network: 그래프 구조로 humon 논리를 표현 , 애플 시리의 논리지 그래프를 사용한다. 
+                    엔티디를 하나의 object로 표현 , 엔티디의 엔티디의 모든 관계를 object로 판단하여 semetic하게 구분
+    UML : ER모델 대체 할 수 있는 모델 중 하나
+    SEUL model : 하나의 unify 로 표시 가능
+
+
+논리적 데이터 모델 : 평면도를 그리는 detail한 단계
+
+PAGE 3-3
+E.F Codd 가 관계데이터모델을 처음 가져왔다.
+관계 데이터 모델
+스프레드 시드처럼 생긴 데이터를 relation data로 할 수 있다. (엄밀하게 relational data는 수학의 집합(SET)을 개념으로 사용 )
+
+계층데이터 모델 : 관계 데이터 모델 전 old버전 , 아직도 은행권에서는 레거시 데이터로 사용을 하기도 한다. tree기반
+네트워크 데이터 모델 : 관계 데이터 모델 전 old버전 , gaph 기반
+
+*Do it : 구글에서 ER모델 다이어그램 도구 검색하기
+
+DB설계가 
+개념설계 > 논리설계 > 관계설계 
+ER모델 > 논리데이터 를 사용하는 편이다.
+
+PAGE 3-6
+Relation Model : 테이블 구조
+Normalization : 정규화 나쁜 구조의 테이블을 좋은 구조의 테이블로 바꾸는 과정
+
+PAGE 3-7 **
+SKU_ITEM 과 SKU_DATA를 합칠때 : SKU_DATA 에서 주문하지 않은 데이터가 사라지게 된다.
+
+관계 데이터 모델에서는 기본 키 값이 없다면 삽입을 못한다.
+ORER_ITEM 은 unique한 값이 없다
+복합키 : ORDER_ITEM 과 SKU_ITEM orderNUmber 
+
+1번 줄을 기준으로 100100 은 주문되지 않기 때문에 SKU_DATA 를 SKU_ITEM을 합칠때 OrderNumber가 값이 없어서 null이 된다.
+: 그래서  세 테이블을 합치기가 어렵다
+
+복합키 : 두 키를 합쳐서 기본키를 만드는 것 예를 들어 ORDER_ITEM 에서는 OrderNumber 와 SKU 를 합친것
+
+기본키 
+ORDER_ITEM : 복합키 : ORDER_NUMBER , SKU (외래키) 
+SKU_DATA : SKU (기본키)
+데이터 모델
+S, O , C 로 구성
+S : Structre 
+O : Operation
+C : Constraints 
+
+S : Structre
+기본단위가 relation 열을 속성 , 행을 튜플이라고 한다.
+relation : 튜플의 집합
+O : Operation
+** 관계 대수의 의미가 어떤 의미인지 파악하기
+    집합 연산 : 합집합 ,교집합 ,차집합 , 카디션 프로덕트
+    순수 연산 : selection, projection, join, division
+
+C : Constraints
+객체 무결성 :기본키는 null값을 가질 수 없다. (기본키가 빈칸일 수 없다)
+기본키가 null이면 특정 tuple을 찾아갈 수 없다.
+참조 무결성 : 외래키는 반드시 기본키의 값으로 존재해야 한다. (ex ORDER_ITEM 에서 SKU키는 SKU_DATA의 SKU키와 같아야 한다)
+
+PAGE 3-11
+Entity
+Relation : 엔티디는 Relation에 속해야 한다.
+Functional dependency  : *
+Determinant: 결정자 *
+Candidate Key : 후보키 (기본키의 자격을 갖춘)
+Composite Key : 복합키
+Primary Key  : 기본키
+Foreign Key : 외래키
+Referential intergrity constraint : 참조 무결성
+Normal form : 정규형 *
+Multivalued dependency : 지속성 ?  *
+* 정규화의 용어
+Surrogate key : oracle의 idententiy 와 연관 적절한 기본키의 후보가 없을때 대신 사용 (데디키?)
+
+후보키 : 기본키가 여러개 일때 unique한 값으로 되는 키의 후보 순위 (직원 번호-핸드폰번호, 이메일)
+다른 여러 후보키 (핸드폰번호, 이메일)이 있을때 기본키를 직원 번호로 해야 하는 이유는 무엇일까?
+심사 기준을 결정 : 1. 길이가 짧다(short) 2. 가능하면 문자열보다 숫자(numeric) 3. 자주 변경되는 값보다는 변경하는 가능성이 적은 순 (never-changing)
+
+
+PAGE 3-12
+
+Entity
+정보의 변화를 추적하고 싶은 식별가능한 것
+
+PAGE 3-17
+Relation
+열은 엔티디에 관한 데이터이다
+칼럼은 엔티디의 속성에 관한 데이터이다
+칼럼 하나의 모든 값들은 동일한 종이다.
+All entries in a column are of the same kind(same kind= domain) 
+칼럼 이름이 중복되지 않는다 (unique하다)
+테이블의 셀은 single value 이다.(값이 하나다 , 콤마 (,)가 없다. 두개 이상의 값이 없다) - Actomic value
+칼럼,행의 순서가 중요하지는 않다. 순서를 바꿀 수 있다.
+Relation은 튜플의 집합이다.
+
+PAGE 3-16
+행을 record
+열을 field라고도 함
+Relation
+행(row) : tuple(튜플),record(레코드)
+열(column): attribute(속성),field(필드)
+
+PAGE 3-17
+Relation 정의
+튜플의 집합니다. (set of tuples)
+도메인(domain)(특정 attributed가 가질 수 있는 값의 집합)의 subset이다. 
+
+Relation Scheme : 스키마 파트 - 제목 부분 (Intension 내포)
+relation instance : 튜플의 범위(set of tuple) - 실제 값 (Extension 외연)
+
+PAGE 3-16
+차수(degree): 애트리뷰트 수 : 열의 수
+카디널리티(cardinality) : 튜플의 수 : 행의 수
+- 쿼리 옵티마이지 할때 중요하다
+PAGE 3-18
+sample 표
+차수가 6이고 카디널리티는 7이다.
+
+
+PAGE 3-22
+relation은 tuple의 집합이다.
+엄밀히 말하면 table과 relation은 다르지만 편의상 ex) student relation, student tuple을 같이 사용한다.
+
+
+PAGE 3-23
+Functinal Dependency : 정규화
+one attributes determines the value of a second attribute
+하나의 값이 다른 값을 결정한다
+
+student ID -> studentName
+studentID -> (DormName, DormRoom, Fee)
+함수종속의 결정자는 studentID가 된다.
+
+ExtendedPrice = Quantity X UitPrice
+함수 종속의 left 와 right에 하나 이상의 값이 온다.
+(Quantity, UnitPrice) => ExtendedPrice
+
+Functional Dependency가 equations 는 아니다 !
+
+PAGE 3-24
+ObjectColor => weight, ObjectColor => Shape를 묶어서 
+ObjectColor => (Weight, Shape) 로 표현할 수 있다.
+
+Composite Determinants  복합 결정자
+두개 이상의 left side로 right side가 결정되면 복합 결정자라고 한다
+
+PAGE 3-26
+Functional Dependency Rules
+if A => (B,C) then A -> B and A ->C
+
+if (A,B) -> C neither A nor B determines C by it self
+
+PAGE 3-27
+Functional Dependences in the SKU DATA Table 예시 테이블
+SKU가 후보키이자 기본키이다.
+SKU, SKU_Description은 후보키가 된다.
+후보키는 다른 모드 키의 속성을 결정한다.
+
+SKU -> (SKU_Desciption, Department, Buyer) 기본키라서 나머지 세 속성을 결정
+SKU_Description -> (SKU, Department, Buyer) 후보키도 다른 속성을 결정 할 수 있다.
+Buyer -> Department
+
+PAGE 3-29
+키는 각 나머지 키를 결정한다.
+(OrderNumber , SKU) -> (Quantity, Price, Extended Price)
+(Quantity, Price) -> (Extended Price)
+
+PAGE 3-31
+(함수) 결정자인지 ,아닌지 는 모든 테이블을 봐야 한다.
+논리적으로 타당할때 결정자인지를 결정한다. (테이블로 결정하는것보다 논리적으로 결정해야 한다)
+
+PAGE 3-32
+Keys
+키의 두가지 성질
+유일성 - uniquenesss
+최소성 - mininality
+
+sku에 sku_description을 붙여도 unique하다.
+최소성은 super key인지 아닌지를 판단하는 기준이 된다.
+sku에 buyer를 붙이면 super key가 된다.
+composite key : 복합키
+candidate key : 후보키
+
+하나의 기본키는 하나의 후보키이다. 기본키는 오직 1개뿐이다. only one primary key per relation
+primary key is short , numeric and never changes(드물게 변경하는)
+
+PAGE 3-34
+Surrogate Keys(데디 키?)
+적절한 기본키가 없을때 DB엔진에서 생성하는 키 : DBMS supplied
+보통 db내부적으로 해결하기 위해 숨겨져 사용한다
+
+
+PAGE 3-35
+Surrogate keys 예시
+RENTAL_PROPERTY (Street, City, State/Province , Zip/PostalCode, Country, Rental_Rate)
+
+PAGE 3-36
+foreign key 외래키
+한 relation의 기본키가 다른 relation와 배치한 키 : the primary key of one relation that is placed in another relation to form a link between the relations
+관계모델에서 다른 관계를 참조할때 연결되는 키
+
+PAGE 3-37
+DEPARTMENT (*DepartName, BudgetCode, ManagerName)
+EMPLOYEE (*EmployeeNumber, Employee Name, **DepartmentName)
+
+DepartmentName은 외래키다. 
+
+### PAGE 3-38*****
+
+### 후보키 : 유일성 O, 최소성 O
+### 기본키 : 유일성 O, 최소성 O
+### 대체키 : 유일성 O , 최소성 O
+### 외래키 : 유일성 O, 최소성 X (참조하는 값에서는 중복될 수 밖에 없기 때문에)
+### 수퍼키 : 유일성 O , 최소성 X
+### 인덱스 관점 용어 : 보조키(secondary key) - 위의 다섯가지 키와 다른 개념의 키이다.
+
+PAGE 3-20
+구조적 제약조건
+개체 무결성 : 기본키(PK)에 대한 제약 , 기본키는 null값을 가질 수 없다. (null값의 의미는 여러가지로 해석이 되기때문에 주의해야 한다.)
+참조 무결성 : 외래키(FK)에 대한 제약, 외래키는 Null값을 허용한다. 외래키는 그 자신이 기본키로 사용된 테이블의 기본키의 값을 가진다. 
+
+의미적 제약조건 :도메인 무결성
+
+PAGE 3-43
+Modification Anomalies
+삭제 , 삽입 ,업데이트 할때 문제가 발생 할 수 있다.
+
+PAGE 3-44
+예제 표2
+테이블 안에서 한 행에 같은 기본키이지만 값이 다르다면 (예제 ItemNumber : 100-PK, AcquistionCost:3500, 5500) 일괄성이 깨진다.
+무결성은 정확성을 의미한다. 새로 업데이트 한 값이 업데이트 되었다면 바뀐 값으로 수정해야 한다. ( 6행 ItemNumber : 100 , AcquistionCost:3500, 5500) 무결성은 지켜진다
+
+PAGE 3-45
+Relations are categorized as a normal form based on which modification anomalies or other problems that they are subject to
+관계는 다음과 같은 수정 이상 또는 기타 문제에 따라 정상 형태로 분류됩니다.
+source of Anomaly : 이상원인                            Normal Forms : 정규화               Design Principles 
+Functional dependencies  함수 종속성                    1NF , 2NF, 3NF, BCNF                BCNF : 후보키가 determinant 하도록 설계
+Multivalued dependencies 다중값 종속성                  4NF                                 4NF : 다중값 종속성에 해당하는 값을 자신의 테이블로 옮긴다
+Data Constraints and oddities 데이터 제약 및 이상값     5NF , DK/NF                         DK/NF : 모든 제약 조건을 후보 키 및 도메인의 논리적 결과로 만듭니다.
+
+PAGE 3-46
+1NF : relation에는 single value만 들어간다.
+2NF : 기본키가 복합키일때에 나머지 키의 속성들은 기본키에 의해 결정된다.(모든 비 키 속성이 모든 기본 키에 의존하는 경우 관계는 2NF입니다.)
+3NF: 관계는 2NF에 있고 기본 키를 제외하고 결정 요인이없는 경우 관계가 3NF입니다.
+Boyce-Codd Normal Form(BCNF) : 모든 결정 요인이 후보 키 인 경우 관계는 BCNF에 있습니다.
+
+PAGE 3-49
+정규화의 핵심 ***
+키가 아닌 결정자를 제거
+결정자가 키의 일부 -> 부분 함수 종속
+A -> B -> C : 이행 종속 ,여기서 A만 키
+
+Kronke : 하나의 릴레이션이 하나의 주제만 포함하도록 하라
+
+PAGE 3-50 *****
+Eliminating Modification Anomalies from Functinal Dependencies in Relations : Put All Relations into BCNF
+관계에서 기능 종속성에서 이상한 점을 수정 : 모든 관계를 BCNF에 저장
+
+Process for Putting a Relation into BCNF
+1. Identify every functional dependency
+모든 함수 종속을 식별
+2. Identify every candidate key.
+모든 후보키를 식별
+3. If there is a functional dependency that has a determinant that is not a candidate Key
+후보키가 아닌 결정자이면 다음의 과정을 한다.
+    A. Move the columns of that functional dependency into a new relation
+    A. 해당 함수 종속성의 열을 새 관계로 이동
+    B. Make the determinant of that functional dependency the primary key of the new relation
+    B. 해당 기능 의존성의 결정을 새로운 관계의 주요 키로 만드십시오.
+    C. Leave a copy of the determinant as a foreign key in the original relation
+    C. 결정자의 복사본을 원래 관계에서 외래 키로 남깁니다.
+    D. Create a referential intergrity constraint between the original relation and the new relation
+    D. 원래 관계와 새로운 관계 사이에 참조 무결성 제약 조건을 만듭니다.
+
+4. Repeat step 3 Until every determinant of every relation is a candidate key
+모든 관계의 모든 결정 요인이 후보 키가 될 때까지 3단계를 반복합니다.
+
+PAGE 3-53
+바람직하지 않은 하나의 테이블  --(BCNF)--> 두개의 테이블로 만든다.
+
+
+PAGE 5-5
+ER모델은 db구조 변경이 용이하지 않다. 
+It is easier to change a data model then it is to change a database design, so it is the appropriate place to work through conceptual database problems
+
+PAGE 5-6
+ER모델은 다이어그램을 만들 수 있다.
+그래픽 심볼을 제공하는 형태이지만 표준화가 되어 있지 않다. (표기법이 다르다)
+Entity-Relationship model is a set of concepts and graphical symbols that can be used to create conceptual schemas.
+
+PAGE 5-7
+ER모델의 가장 핵심은 Entity 이다.
+
+Entities / Entity는 객체이다.
+DB에 정보를 기록해서 추적하는 식별가능한 것(유형-학생,무형-과목)
+Entity class - a collection of Entities of a given type
+Entity instance - the occurrence of particular Entity
+수강하고 있는 학생 하나 하나 - 엔티디 인스턴스
+주어진 타입의 엔티디 클래스 : 기본 타입/ 학생이라는 타입이 있을때 듣고있는 학생 총 50명 - 엔티디 클래스
+Peter Chen은 Entity Set을 정의
+
+PAGE 5-8
+Entity set (Entity class) 동일한 type을 갖는 entity occurance의 집합
+Entity occurrence(Entity instance) 
+
+PAGE 5-9
+*relation 과 Relationship 은 전혀 상관이 없다. 별개다.
+Entity 와 대비되는 용어는 relationship을 의미
+Relationship type => 스키마 : employee 와 project 의 N:M 관계
+Relationship occurrence : (occurence는 사례를 의미하는것 같당..) 100번 employee가 p1 project에 참가
+Relationship set : 모든 직원에 대해 모든 프로젝트 참가 정보를 모은것
+
+PAGE 5-10 ***
+Relationship : relation에 참가하는 차수
+(vs 관계모델의 차수는 attribute 개수)
+* Relationship에서 차수, degree , cardinality는 relation의 차수, degree, cardinality와 별개다. 다르다. ** 중요
+
+* 참가 개체수(degree)에 따라
+Unary 단항
+Binary 이항
+Ternary 삼항
+N-ary N항
+
+* Cardinality에 따라
+1:1일대일 (ex-gender marry관계)
+1:N 일대다 (ex-PM관계)
+N:M 다대다 (ex-BOM (Bill of Material))
+
+PAGE 5-10
+* 의미에 따라 (Peter Chen)
+HAS-A관계 : Association 연관
+관계 안에 has a 가 들어갔을때 문장이 의미가 될때
+IS-A관계 : Generalization 일반화, specializtion 세분화
+관계 안에 is a 가 들어갔을때 문장이 의미가 될때
+PART-OF 관계 : Aggregation => EE-R
+관계 안에 part of 가 들어갔을때 문장이 의미가 될때 
+
+PAGE 5-12 예시 CUSTOMER : The Entity Class and Two Entity instances
+
+CUSTOMER Entity
+CUSTOMER
+Customer Item
+NumberCustomer Name
+Street
+City
+State
+Zip
+ContactName
+Email
+
+Two CUSTOMER instances
+- 1 -
+1234
+Ajax Manufacturing
+123 Elm Street
+TM
+P_Schwartz
+P_S@Ajax.com
+
+- 2 -
+마찬가지로 비슷한 데이터
+
+PAGE 5-14
+타원형 : 객체 (Entity)
+사각형 : attribute
+
+PAGE 5-15 **
+ER모델에서는 key를 쓰지 않는다.
+관계모드에서 Key라고 쓰는 부분을 Entity는 식별자(Intentifers)라고 한다. 
+
+PAGE 5-16
+Intentifers
+ER모드의 식별자, 관계모드의 key라고 한다.
+key 와 비슷하게 Composite idententifiers가 있다. 복합 식별자
+
+PAGE 5-17
+박스에 그림자가 되어있다면 Entity 라고 볼 수 있다.
+a- 식별자와 객체모두 네모
+b - 식별자는 text만 Entity만 네모 다이어그램으로
+c - Entity with no attributes
+
+PAGE 5-18
+peter-chan에 의하면 
+Entites can be associated with one another in relationsips
+ER모드는 relationship을 가질 수 있다.
+
+relationship은 한 개 이상의 Entity class를 포함 할 수 있다.
+
+PAGE 5-20
+Binary Relationship
+Employee는 여러개의 skill을 가질 수 있다.
+한 skill은 여러 직원이 가지고 있다.
+
+PAGE 5-21
+Ternary Relationship
+CLIENT - PROJECT - ARCHITECT
+
+PAGE 5-23
+cardinality
+1:1 , N:N , 1:N 관계 등등 count로 표시한다.
+Maximum cardinality 
+1:1 , N:N , 1:N 관계 가 여기에 해당
+
+Minimum cardinality
+: 만족해야만 하는 / Must
+관계가 있을때 minimum 몇개 maxmum 몇개 참가할수있는지 알 수 있다.
+
+PAGE 5-26
+1:N 관계를 parent and child Entites로 판단할수있다.
+
+PAGE 5-27
+HAS-A
+Each entity instance has a relationship another entity instance
+EMPLOYEE - COMPUTER
+COMPUTER - EMPLOYEE
+
+PAGE 5-26
+Minimum cardinality :최소개수 이상 조건을 맞춰야 한다.
+
+PAGE 5-29
+
+PAGE 5-31 예시에서 a는 zero, b는 one에 해당한다.
+Minumum cardinality of zero[0] : |
+양쪽다 mandatory
+Minimum cardinality of one[1] : ○
+몇몇 case 는 할당이 안될 수 도 있다.
+
+PAGE 5-31
+예제 C
+직원은 한개 이상의 Skill을 가져야 한다.
+여러 자격증 중 직원이 한명 이상 있는데 모두 포함할 수 하지 않을 수 있다.
+
+PAGE 5-36
+Weak Entities  
+약한 객체
+All ID-Dependantentities are considered weak
+There are also non-ID-dependent weak Entities (점선 관계)
+The identifier of the parent does not appear in the identifier of the weak child entity
+
+PAGE 5-37
+AUTO-Model  - VHICLE  1:N관계 / ID-Dependant Entity
+AUTO-Model - VHICLE (VIM) 1 :N 관계 /weak Entites : Non ID Dependent Weak Entity
+
+PAGE 5-38 (요약) ***
+
+
+
+Q Entity는 식별자를 가지고 있는 독립적인 정보다. ex) 회사, 과목 , 고객 등등
+
+
+PAGE 5-39  
+Subtypes
+객체에서 Super type Entity  Subtypes Entity 라고 한다.
+A subtype entity is a special case of a supertype entity :
+- STUCENT : UNDERGRADATE or GRADUATE
+
+The supertype contains all common attributes, while the subtypes contain specific attributes
+
+The supertype may have a discriminator attribute which indicates the subtype.
+
+
+PAGE 5-40
+ER 에서는 다이어그램이 표준화되지 않아서 여러 다이어그램이 나오다.
+MALE , FEMALE 을 식별자로 본다
+
+MALE , FEMALE  -------IS-A 관계 (일반화)----->PATIENT
+supertype이나 subtypes 가 비슷해서 따로 표시하지 않았다 (?)
+PATIENT 는 exclusive가 된다. 
+
+PAGE 5-41
+exclusive
+하나의 supertype 이 최소한인지
+inclusive
+하나의 supertype 이 한개 이상인지
+
+PAGE 5-42
+(왼)
+STUDENT : exclusive
+학부생과 대학원생을 따로 따로 구분
+(오)
+STUDENT : inclusive
+학생 입장에서는 Hiking 동아리와 Sailing 동아리 둘다/둘중하나 가입할 수 있다.
+
+PAGE 5-43
+relationships connecting supertypes and subtypes are called IS-A relationships, becasue a subthpe IS A supertype
+subtypes are used to aviod value-inappropriate nulls
+
+PAGE 5-44 , PAGE 5-45 다이어그램 요약 
+
+PAGE 5-46 1:1  
+실무 예제1
+pattern 을 사용
+스크래치상태에서 ER모드를 사용한다고 할때
+데이터객체가 어떤부분이 들어가야하는지 찾는다.
+PAGE 5-47 
+실무예제 1을 ER모드 다이어그램으로 표시
+1:1관계  minimum관계 (관계에 비어있는 부분이 있을 수도 있다. -> 실무에서 해석에서 어떤 부분이 비어있는지 해석하는것이 관건)
+
+PAGE 5-48 , PAGE 5-49
+1:N 관계
+위 : parent
+아래 : child
+
+DepartMent : minimum 관계 (COMPANY 다이어그램 근처에 | 표시)
+COMPANY 는 mininum 0 (DEPARTMENT 다이어그램 근처에 동그라미 표시)
+
+PAGE 5-50, 5-51
+N:M 관계
+한 supprier 이 여러
+까마귀발 : many to many 
+
+COMPANY : minimum 0
+PART : 적어도 한개 이상의 회사가 있어야 한다
+두개의 one to many를 분리하여 Association으로 연결
+
+PAGE 5-53, PAGE 5-44
+Association Pttern (특이 케이스)
+
+& 회사별 공급가격이 다르다.
+
+
+PAGE 5-54, PAGE 5-55
+Multivalued Attribute Pattern
+
+PHONE NUMBER 
+속성정보가 여러개일때 (Multivalued이기 때문) // 독립적인 식별가능한 entity
+attribute는 독립적인 식별가능한 부분이 아니다.
+
+comany를 하나의 entity로
+phone 을 약한 객체로 해서
+many to many (까마귀발)로 이어졌다.
+Multivalued Attribute Pattern을 약한 객체로 간주하기도 한다.
+
+PAGE 5-56 , PAGE 5-57
+ID-Dependent Relationships : The Multivalued Attribute pattern
+Association 으로 company를 삼았다.
+PHONE 과 CONTACT 가 many to many
+
+PAGE 5-58, PAGE 5-59
+the archetype/instance pattern occurs when the ID-dependent-child entity is the physical manifestation (instance) of an abstract or logical parent
+PAINTING : PRINT
+CLASS : SECTION
+HOUSE_MODEL : HOUSE
+
+PAGE 5-60 
+약한객체인데 
+ID-dependent가 아닌 Entity 예제 다이어그램
+
+PAGE 5-61, PAGE 5-62
+Line-Item Pattern
+회사의 주문서 양식
+
+정보들을 구분한 선이 있다면 그 선을 기준으로 Entity가 나뉠 수 있다는 점 참고
+주문서를 기분으로 여러 Entity 관계들이 나온다는 점을 참고
+Line-Item-Pattern은 많은 회사에서 사용한다
+
+PAGE 5-66, PAGE 5-67
+The For-Use-By Pattern
+
+LICENSE가 IS-A PATTERN으로 되어 있다.
+COMMERCIAL_LICENSE 와 SPORT_LICENSE 둘 중 하나로 나눈다.
+vessel - COMMERCIAL_LICENSE 는 many 관계로 이어져있다.
+
+PAGE 5-68, PAGE 5-69
+1:1 Recursive Relationships
+A recursive relationship occurs when an entity has a relationsips to itself.
+뉴머릭 관계라고도 한다.
+자기 자신을 참조한다.
+두개의 다이어그램 서로 같은 뜻
+
+PAGE 5-70
+1:N Recursive Relationship
+회사 관료제 (회장-과장-부장-팀장-사원)
+
+PAGE 5-71 
+N:M Recursive Relationship
+Bill Of Material (BOM) 에 해당한다.
+부품과 부품의 관계
+
+washer-wheel Assembly 의 사이가 N:M Recursive 사례에 속한다
+
+PAGE 5
+
+PAGE 5
+
+PAGE 5
+
+
+p- 5
+ 

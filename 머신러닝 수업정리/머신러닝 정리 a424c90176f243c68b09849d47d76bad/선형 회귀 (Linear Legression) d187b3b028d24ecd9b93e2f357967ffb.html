@@ -1,0 +1,674 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>선형 회귀 (Linear Legression)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="d187b3b0-28d2-4ecd-9b93-e2f357967ffb" class="page sans"><header><div class="page-header-icon undefined"><span class="icon">📈</span></div><h1 class="page-title"><strong><strong>선형 회귀 (Linear Legression)</strong></strong></h1></header><div class="page-body"><p id="2b72383c-65d0-44ed-ae88-6726fa37f97f" class="">
+</p><p id="0b23b96b-248f-4274-ac3d-5a59e28bec79" class="">
+</p><figure id="8e3602a0-79a2-422e-96cf-fb1c7c4009e4" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled.png"><img style="width:633px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled.png"/></a><figcaption>통계학에서는 좀 어려운 표현으로 이 선을 최적선, 영어로는 line of best fit이라고도 합니다.  집 크기가 주어졌을 때, 이걸 이용해서 집 값을 예측하는 예시를 사용할게요. 선형 회귀는 여기 있는 데이터를 가장 잘 대변해 주는 선을 찾아내는 것입니다. 이 데이터에 가장 잘 맞는, 가장 적절한 하나의 선을 찾아내는 거죠.</figcaption></figure><h3 id="0379d687-7586-40b3-a6db-87ae563af7c8" class="">변수 </h3><h3 id="4b1c7c8b-4691-4ad2-9e61-b7463dea01ca" class="">목표 변수 = target variable = output variable = 아웃풋</h3><h3 id="0fdb1105-7a57-4476-b124-5aad6887436c" class="">입력 변수 = input variable = feature</h3><figure id="abb438ba-5d7d-40d5-9deb-acb9297e11ca" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%201.png"><img style="width:785px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%201.png"/></a><figcaption>나중에는 좀 더 복잡해지겠지만, 일단 우리가 찾으려는 선은 어떤 곡선이 아니라 그냥 직선입니다. 직선이라는 건 일차 함수라는 거고, 그러면 y = ax + b의 형태로 표현됩니다. 결국 선형 회귀의 임무는 계수 a랑 상수 b를 찾아내는 거죠.</figcaption></figure><figure id="1fa75c83-7a9d-4234-9b72-498cd8bdddd0" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%202.png"><img style="width:323px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%202.png"/></a><figcaption>&#x27;가설 함수&#x27;, 영어로는 &#x27;hypothesis function&#x27;이라고 부릅니다.</figcaption></figure><figure id="ca35b8ab-fa0a-4b5b-af09-557ef4242f46" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%203.png"><img style="width:533px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%203.png"/></a><figcaption>dfs 여기서 \theta_0<em>θ</em>0는 상수항이기 때문에 곱해지는 입력 변수가 없는데요. 그렇기 때문에 통일성을 위해서 이렇게 표현할 때도 있습니다.  이 식에서는 항상 x_0 = 1<em>x</em>0=1 이렇게 고정을 해놓은 건데요. 혹시 이렇게 돼있는 표현을 보면 그냥  \theta_0<em>θ</em>0은 상수항이라고 생각하시면 됩니다.</figcaption></figure><figure id="13293db2-ce70-4ffa-9b6b-7a10a267e64c" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%204.png"><img style="width:652px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%204.png"/></a><figcaption> 어떤 기준을 두고 비교하는 게 좋겠죠?</figcaption></figure><h1 id="675048e0-72f0-4580-a4f6-dc53db69789a" class=""><strong>평균 제곱 오차</strong></h1><p id="86e170fd-c00d-4860-88f5-ce5d86ef5c27" class="">가설 함수가 얼마나 좋은지 평가하는 방법을 알려드리겠습니다. 선형 회귀에서 가장 많이 쓰는 방법은 평균 제곱 오차, 영어로는 mean squared error라는 것입니다. 앞 글자만 따서 MSE라고도 하는데, 그냥 MSE라고 쓸게요.</p><p id="503f460f-ce83-4942-a6a3-efc610c35830" class="">이 평균 제곱 오차라는 건, 이 데이터들과 가설 함수가 평균적으로 얼마나 떨어져 있는지 나타내기 위한 하나의 방식인데요. 계산하는 방법을 보여드릴게요.</p><p id="4da89f56-d4aa-467b-b392-844ec43a6438" class="">이렇게 데이터가 있고 가설 함수가 있으면, 이 데이터들이 각각 이 선에서 어느정도씩 벗어나잖아요? 좀 더 정확하게 표현하자면, 각 데이터의 실제 값과, 이 가설 함수가 예측하는 값이 조금씩 차이가 나는 건데요.</p><h3 id="e53f5f45-f5d2-45fd-9fd4-223952536fb7" class=""></h3><figure id="294a8f46-fefa-45da-bc36-234b81fc6198" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%205.png"><img style="width:616px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%205.png"/></a><figcaption>집의 크기 47평을 가설 함수에 넣으면 집 값이 18.8억으로 예측됩니다. 하지만 이 집의 실제 가격은 22억네요. 오차는 예측 값에서 원래 값을 뺀 건데요. -3.2죠?  집의 크기 39평을 가설 함수에 넣으면 가격 이 15.6억으로 예측되는데, 실제 가격은 9억입니다. 그러면 오차가 6.6인 거죠. 이런 식으로 오차를 다 구할 수 있는데, 이 오차값들을 모두 제곱합니다. 그리고 제곱한 값들을 더합니다. 그리고 이것의 평균을 내기 위해서 총 데이터 개수 만큼 나누면 됩니다.</figcaption></figure><h3 id="e8ebeaf7-d1af-4c8e-8ef0-6365a410c031" class="">평균 제곱 오차가 크다는 건 가설 함수와 데이터들 간의 오차가 크다는 거고, 결국 그 가설 함수는 데이터들을 잘 표현해 내지 못한 겁니다.</h3><h3 id="697d2a79-4d27-45ba-80f7-0dafb4c3a009" class=""><strong><strong>제곱을 하는 이유</strong></strong></h3><figure id="bf37746a-1917-49da-be89-2f4da6b765ca" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%206.png"><img style="width:588px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%206.png"/></a><figcaption>양수로 통일을 할 수 있습니다. 오차에 제곱을 하는 또 다른 이유는, 오차가 커질수록 더 부각시키기 위해서입니다</figcaption></figure><h3 id="6e9a627c-4e71-44b9-8f2d-67c8aa6b0df7" class=""><strong><strong>평균 제곱 오차 일반화</strong></strong></h3><figure id="7367c5b6-85de-4cd3-a9b6-74d52bf466cf" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%207.png"><img style="width:187px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%207.png"/></a><figcaption>마지막에 그 합을 총 개수인 m으로 나눠서 평균을 내면 되는 겁니다.</figcaption></figure><figure id="6300d3f0-9060-4ffb-ab3d-9fdeda627acd" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%208.png"><img style="width:187px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%208.png"/></a><figcaption>h는 가설 함수입니다. 그리고 당연히 x는 인풋, y는 아웃풋인데요. x^{(i)}x 
+ 는 i번째 인풋, y^{(i)} 는 i번째 아웃풋을 뜻하는 겁니다. 집 가격 예측 프로그램을 
+예시로 들면, x^{(i)}는 i번째 집의 크기고 y^{(i)}는 i번째 집의 가격이겠죠.</figcaption></figure><figure id="e83dba35-a5d1-454a-a6da-c0080630d7c4" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%209.png"><img style="width:81px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%209.png"/></a></figure><p id="9afdea08-cda1-4f90-8e1e-33c4ce4cdc35" class="">이건 시그마라고 하는 그리스 문자입니다. 시그마 밑에 &quot;i는 1&quot;이라고 되어 있고, 위에 m이라는 문자가 있습니다. 이게 어떤 의미냐면, i에 1부터 m까지 반복적으로 대입하라는 겁니다. 시그마 오른쪽에 있는 부분을 보면 이렇게 i가 있잖아요? i에 1을 대입해서 계산하고, i에 2를 대입해서 계산하고, i에 3을 대입해서 계산하고... 이런 식으로 i에 1부터 m까지 대입해서 계산하는 건데요. 그리고 나서 이렇게 계산된 값들을 모두 더해야 합니다. 계산된 값들을 다 더하는 것까지가 이 시그마의 역할입니다.</p><p id="ad81519e-fddb-4752-aeee-87ef05edf159" class="">
+</p><h3 id="4c01b5a1-84b6-41a5-93d1-fc3c9af402ed" class="">손실함수</h3><p id="a5248fc5-4127-48a2-8ab6-f982757b3dd1" class="">선형회귀는 값을 잘 맞는 최적선을 구하는 과정이다.</p><figure id="3f0b2628-5750-4141-a20f-a464141e7da3" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2010.png"><img style="width:781px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2010.png"/></a></figure><p id="5add54c5-16a5-4e6a-9907-21a1f3061a52" class="">잘 맞는 선을 찾는 것을 하나하나 찾을때 그 선을 가설함수라고 한다. </p><figure id="f99ced24-d4c8-4856-850a-04f5888a0779" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2011.png"><img style="width:343px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2011.png"/></a></figure><figure id="8732cf8b-70a2-4546-beb1-a5d9f03204f5" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2012.png"><img style="width:747px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2012.png"/></a></figure><figure id="7468623b-887c-452b-9822-29ba9d21ec40" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2013.png"><img style="width:628px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2013.png"/></a></figure><figure id="0b2fd4e9-6649-404c-ba68-b07ebe71b149" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2014.png"><img style="width:575px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2014.png"/></a></figure><figure id="730b6640-6223-4d94-b6aa-2f5195346177" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2015.png"><img style="width:571px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2015.png"/></a></figure><figure id="1eadff7a-c30b-4c57-9005-14c45e6eb17e" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2016.png"><img style="width:537px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2016.png"/></a><figcaption>손실 함수는 보통 J라는 문자를 쓰고요... 선형 회귀의 경우에는 평균 제곱 오차가 손실 함수의 아웃풋입니다. 특정 가설 함수의 평균 제곱 오차가 크면 이 손실 함수의 아웃풋이 크다는 거고, 그러면 손실이 크기 때문에 안 좋은 가설 함수라는 거죠. 반대로 가설 함수의 평균 제곱 오차가 작으면 이 손실 함수의 아웃풋이 작다는 거고, 그러면 손실이 적기 때문에 좋은 가설 함수인 겁니다.</figcaption></figure><figure id="e534f71d-925f-4c63-ad9e-cf078501cfec" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2017.png"><img style="width:646px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2017.png"/></a></figure><h3 id="af217d89-f237-41dd-aaea-e69d22557262" class=""><strong><strong>왜 인풋이 세타인가?</strong></strong></h3><p id="92d50e89-6675-495a-acd4-544e2acb683b" class="">가설 함수에서 바꿀 수 있는 건 이 세타 값들이죠? 세타 값들을 잘 조율해서, 가장 적합한 가설 함수를 찾아내는 건데요. 그러면 결국 손실 함수의 아웃풋은 이 세타 값들을 어떻게 설정하느냐에 달려 있는 겁니다. 그래서 손실 함수의 인풋이 세타인 거죠. 반면 x랑 y는 변수처럼 보이지만 사실 정해진 데이터를 대입하는 것이기 때문에, 얘네들이 손실 함수에서는 오히려 변수가 아니라 상수라고 할 수 있습니다.</p><h3 id="c4cf55e7-cc70-441e-bad2-bd4f7eaa3cd0" class="">최적선의 기준은 손실함수로 구한다.</h3><figure id="f4b41681-3ad2-40e8-8cf9-dc900e7c556b" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2018.png"><img style="width:701px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2018.png"/></a></figure><figure id="37c7e57d-09d2-4476-a4d7-3e1ad2bec6e5" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2019.png"><img style="width:729px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2019.png"/></a></figure><h3 id="29fa7394-34e3-41d8-9289-58cbbc38dd77" class="">손실함수의 아웃풋을 최소화 하는 방법을 경사하강법이라고 한다. </h3><figure id="d229b8c5-e2ee-4db5-b4fb-ede0f780b54c" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2020.png"><img style="width:763px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2020.png"/></a></figure><h3 id="f49d82f5-6635-4b9a-ba38-5e7d6b067e20" class=""></h3><figure id="9ff7dff4-586d-40f0-9c83-ba3c347dec35" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2021.png"><img style="width:726px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2021.png"/></a></figure><h3 id="19c61c18-4204-4b4f-907a-4fd00522e07a" class=""></h3><figure id="29f7d6ba-1137-4cec-8f70-ed7fea15bfb1" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2022.png"><img style="width:687px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2022.png"/></a></figure><figure id="1da241b6-5b9f-4c18-8931-25b5ccc32dab" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2023.png"><img style="width:687px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2023.png"/></a></figure><figure id="d689d9ff-ec15-4a17-bdbe-83c89b8ccb84" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2024.png"><img style="width:805px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2024.png"/></a></figure><figure id="63fbaccc-3fad-4a92-90e9-56df7c5fc6c5" class="image"><a href="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2025.png"><img style="width:817px" src="%E1%84%89%E1%85%A5%E1%86%AB%E1%84%92%E1%85%A7%E1%86%BC%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1%20(Linear%20Legression)%20d187b3b028d24ecd9b93e2f357967ffb/Untitled%2025.png"/></a></figure></div></article></body></html>

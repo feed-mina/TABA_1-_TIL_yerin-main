@@ -1,0 +1,692 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>로지스틱 회귀(Logistic Regression)</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-opaquegray { background-color: rgba(255, 255, 255, 0.0375); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="90fd30d3-8b45-4aa9-b707-f8a0dc263241" class="page sans"><header><div class="page-header-icon undefined"><img class="icon" src="https://www.notion.so/icons/sliders-vertical_lightgray.svg"/></div><h1 class="page-title">로지스틱 회귀(Logistic Regression)</h1></header><div class="page-body"><p id="910eae87-1ff6-4bed-a3cd-23a4038e0e1d" class="">
+</p><h3 id="acb6e188-a34d-47d3-b6bb-21e8fc6970f1" class="">머신러닝은 지도학습과 비지도학습으로 나뉜다.</h3><h3 id="1ff69d09-f1b1-475e-981b-a06aaa9b70c4" class="">지도학습은 회귀와 분류로 나뉜다.</h3><p id="dd321645-e482-4bd1-81d4-ec7ee7a069f1" class="">회귀는 연속적인 값 예측, 분류는 정해진 몇개의 값 중 예측</p><p id="2a814fdd-b224-4b2a-940b-6a859f8a4026" class="">분류 예시 : 스팸인지 일반이메일인지 / 스포츠 -정치 -연예 신문내용중 어떤신문?</p><h3 id="3f145705-2f43-408f-82a1-9045f83af1cf" class="">선형회귀는 예외적인 데이터 분류에 민감하다</h3><p id="983172ec-3446-41ab-9879-2f1a2c5805ef" class="">선형회귀는 데이터에 가장 잘 맞는 일차함수를 찾는다.</p><p id="3bf6f562-b9ab-4847-a672-169dee08c848" class="">반면, 로지스틱회귀는 데이터에 가장 잘 맞는 시그모이드를 찾는다. </p><figure id="3b0c6630-6183-41f0-94ac-402f9820cf47" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled.png"><img style="width:316px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled.png"/></a></figure><pre id="cf2cc915-17bc-4174-b776-9690a6a83c7a" class="code"><code>*x*가 엄청 커서 무한대라고 합시다. 시그모이드 식에서 x*x*에 무한대를 대입하면, 
+e*e*의 마이너스 무한대 제곱이잖아요? e*e*는 2.718이라는 양수입니다. 
+정확히 뭔지는 일단 모르셔도 됩니다. 2.718의 마이너스 무한대 제곱이면 뭐가 나올까요? 0이 나옵니다. 
+그러면 분모가 1 + 0이니까 그냥 1이 돼서, 이 함수의 결괏값은 1분의 1... 그냥 1이 됩니다.
+</code></pre><figure id="8c8814aa-10d5-437e-a7fb-6fe3816b9507" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%201.png"><img style="width:585px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%201.png"/></a></figure><h2 id="b645fb1b-ec4f-4d70-93d4-454fd6f0bcbb" class="">시그모이드 함수는 무조건 0과 1사이의 값을 리턴한다.</h2><p id="96f256ab-d25a-49cc-bc17-433286f63e4f" class="">결과가 0과 1사이의 의미란?</p><p id="5d161530-6053-4b57-b707-56764af23f39" class="">선형회귀는 결과가 범위 없이 얼마든지 크거나 작아질 수 있음</p><p id="9f85a775-33ae-46bd-99f2-bd618517c9ed" class="">무조건 0과 1사이의 값이 나오는 시그모이드 함수가 분류에 더 적합하다.</p><p id="608cc34e-10bd-41d0-8217-1327c408a448" class="">
+</p><h3 id="7d935214-3a2e-4ade-8020-1eebbd8f34a4" class="">리턴 값이 결국 0과 1 사이의 연속적인 값 ⇒</h3><h3 id="6e1d011b-e910-4527-8d86-a0bd176a873e" class="">시그모이드 결과값이 0.5보다 큰지 작은지로 분류한다 !</h3><h3 id="6577d739-797d-470f-8f4b-4916ae25509b" class="">가설함수</h3><p id="1898abef-73c9-4449-850f-fb1354b03b30" class="">입력 변수를 받아서 목표변수를 예측해주는 함수</p><figure id="44d9f267-7263-43b2-b677-6cac586e9334" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%202.png"><img style="width:639px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%202.png"/></a><figcaption>선형 회귀에서는 가설 함수가 이렇게 생겼습니다. 벡터를 사용하면 더 간결하게 표현할 수 있겠죠.</figcaption></figure><h3 id="88247d22-f0ba-4176-a9a3-7982e1b6f0af" class="">선형회귀를 약간 변형하여 로지스틱 함수를 받을 수 있다.</h3><figure id="d9494d94-3930-4f8d-9af3-21615280519f" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%203.png"><img style="width:543px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%203.png"/></a></figure><h3 id="10bef979-b1db-4abe-9032-d9f4551f51cc" class=""></h3><h3 id="66702819-9e6d-4eaa-a16b-943a0dc1f7fb" class=""></h3><figure id="0cd8e95e-bc02-42a7-9297-aab9c08d911b" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%204.png"><img style="width:659px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%204.png"/></a></figure><h3 id="ae3f10e2-1ae5-46d4-80b1-fefb55f9b7ab" class=""></h3><figure id="07d03bf6-a644-4282-a79a-24eb4b5f94fb" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%205.png"><img style="width:692px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%205.png"/></a><figcaption>함수 g는 일차 함수죠? 일차 함수는 아웃풋이 엄청 클 수도 있고, 엄청 작을 수도 있습니다. 예를 들어서 일차 함수가 이런 직선이라면, 인풋이 엄청 커지거나 엄청 작아지면 결국 아웃풋도 엄청 커지거나 엄청 작아질 수 있겠죠?</figcaption></figure><figure id="7187db99-e4f8-4087-afd2-fd2e16cf4281" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%206.png"><img style="width:679px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%206.png"/></a><figcaption>그런데 로지스틱 회귀를 할 때 우리는 아웃풋이 항상 0과 1 사이에 떨어지도록 하고 싶습니다. 그러기 위해서는 &#x27;시그모이드 함수&#x27;라는 걸 쓰면 되는데요. 이 시그모이드가 하는 역할이 딱 그겁니다. 여기에 어떤 인풋을 넣든 간에, 아웃풋은 무조건 0과 1 사이에 떨어집니다. 선형 회귀에서 썼던 가설 함수인 g<em>g</em>의 아웃풋을, 이 시그모이드 함수의 인풋으로 집어 넣으면, 결국 0과 1 사이의 결과가 나오겠죠?  참고로 0이나 1이 나오는 게 아니라, 0과 1 사이의 어떤 수가 나오는 겁니다. 유의해 주시길 바랍니다.</figcaption></figure><p id="c2a03556-2051-4615-85b6-657e17795a40" class="">
+</p><figure id="73837414-eade-49f8-81bc-c8cab2a42ead" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%207.png"><img style="width:718px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%207.png"/></a></figure><figure id="f5bc0d03-8a8b-493e-8633-e57d2e356f41" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%208.png"><img style="width:735px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%208.png"/></a></figure><p id="9b7d558f-c382-4ccb-a310-74ea5b293d68" class="">
+</p><h3 id="57e8b292-6bd9-4af0-bc73-bb39b156d4b5" class=""><strong><strong>속성이 하나일 때</strong></strong></h3><figure id="9089dd59-a6cd-4fed-b93d-6ad6bf58e8fd" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%209.png"><img style="width:459px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%209.png"/></a></figure><p id="75e4b5d0-dca4-49a4-ab34-1f257df5aef2" class="">예를 들어서 공부 시간으로 시험을 통과했는지 탈락했는지 예측하고 싶다고 할게요. 그럼 속성이 하나니까 이렇게 가설 함수가 있겠죠? 모든 데이터에 대해서 파란색 영역에 있으면, 통과, 빨간색 영역에 있으면 탈락이라고 할 수 있겠죠? 이렇게 분류를 할 때, 분류를 구별하는 경계선을 Decision Boundary라고 부릅니다.</p><h3 id="53507587-c30b-4012-98db-2612f76adce5" class=""><strong><strong>속성이 2개일 때</strong></strong></h3><blockquote id="02f618ed-f9a3-4158-8754-1b8aa58750f5" class="">모의고사 시험 점수를 갖고 시험을 통과했는지를 예측한다고 할게요. 공부 시간을 x_1 모의고사 시험 점수를 x_2 라고 했을 때  가설 함수</blockquote><figure id="76cd0102-80c3-46ef-9f50-c3d3cf4f7f8f" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2010.png"><img style="width:243px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2010.png"/></a></figure><figure id="db040d92-ff4b-4666-beda-648cc1949be3" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2011.png"><img style="width:453px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2011.png"/></a></figure><figure id="ce3df266-b3e3-42df-a314-0ab6e2844d4f" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2012.png"><img style="width:711px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2012.png"/></a></figure><p id="98ecd355-47c2-4bc9-b6b8-af2a254f54e2" class="">
+</p><p id="774b6c95-800b-4543-ad9b-ca3505aca532" class="">
+</p><h2 id="2d3f166d-c75e-44d4-ae54-cec553f565c8" class="">로그 손실</h2><h3 id="8348bbe7-adff-4bb1-a1b7-a92d5a88b2b3" class="">로그 손실이라고 부르는 이유는, 손실의 정도를 로그 함수로 결정하기 때문</h3><h3 id="5e7ff430-05f4-434b-aa02-377f46c604d8" class="">손실 함수 : 가설함수를 평가한다.</h3><p id="2f7bc9f1-c4bf-4ef5-b313-d5132d95ad2a" class="">로지스틱 회귀의 손실 함수는 평균 제곱 오차를 사용하지는 않습니다. 대신 &#x27;로그 손실&#x27;, 영어로는 log loss라는 걸 사용합니다. 좀 더 어려운 표현으로는 cross entropy라고도 합니다.</p><h3 id="58e83b5f-7bcf-4506-a6de-37887e1bf801" class=""></h3><figure id="40636f1c-7cc7-49c4-953e-b2935d9fc3c1" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2013.png"><img style="width:736px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2013.png"/></a><figcaption>여기서 h(x)h(x)는 어떤 입력 변수에 대한 가설 함수의 예측값이죠? yy는 실제 값이고요. 로그 손실 함수는 예측값이 실제 결과랑 얼마나 괴리가 있는지 알려 주는 역할을 합니다.
+
+그런데 로지스틱 회귀는 분류 알고리즘이잖아요? 그리고 분류가 두 가지라고 가정하면, 가능한 목표 변수가 1과 0밖에 없습니다. 이 두 경우에 대해서 식이 조금 다른 건데요.</figcaption></figure><figure id="9f1391a1-3e85-47c1-8cae-fac8fd951482" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2014.png"><img style="width:593px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2014.png"/></a></figure><h3 id="8241bcd5-0faf-48c5-9e29-a2c015f13278" class="">실제 아웃풋이 1일때</h3><figure id="22647e2e-702b-4f2a-b3a1-65e4f2663efb" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2015.png"><img style="width:655px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2015.png"/></a><figcaption>만약 h(x)가 0.8 정도면, 80%의 확률로 아웃풋이 1일 거라고 예측하는 건데, 실제 결과가 1이기 때문에 이 가설 함수는 꽤 잘했다고 평가할 수 있습니다. 손실이 좀 있긴 하지만, 그렇게 크진 않죠.</figcaption></figure><figure id="67603dc0-c2f1-4fdf-9744-6d3c4cde9d7e" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2016.png"><img style="width:631px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2016.png"/></a><figcaption>, 왼쪽으로 갈수록 손실이 커지는데, 처음에는 슬슬 커지다가 급격하게 가파라집니다. h(x)가 1에서 멀어질수록 잘 못하고 있는 거니까, 손실을 엄청나게 키우는 거죠.</figcaption></figure><p id="dd062428-7953-4f0d-a123-9db72953e2b8" class="">
+</p><h3 id="0a39191e-3933-45e4-8ebf-94dbc261a998" class="">실제 아웃풋이 0일때</h3><p id="08a2ebc8-5577-4ecc-aeda-8ea6634013fb" class="">
+</p><p id="242e00d7-11f1-4157-81e3-1b8b00de3bfd" class="">
+</p><figure id="aa111251-12dc-4e79-8dd6-394a4c0bd02a" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2017.png"><img style="width:690px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2017.png"/></a><figcaption>그래프가 거꾸로 되는 겁니다. h(x))가 0이라는 건, 아웃풋이 1일 확률이 0%라고 예측하는 건데, 실제 결과가 0이기 때문에 완벽하게 예측했다고 할 수 있습니다. 그래서 손실이 0인 거죠.</figcaption></figure><figure id="f1d432d5-953e-4b7b-a80c-b88fbce9f161" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2018.png"><img style="width:691px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2018.png"/></a><figcaption>만약 h(x)가 0.2 정도면, 20%의 확률로 아웃풋이 1일 거라고 예측하는 건데, 실제 결과가 0이기 때문에 나쁘지 않게 예측했다고 할 수 있습니다. 그래서 손실이 좀 있긴 하지만 크진 않습니다.</figcaption></figure><figure id="73cdf655-3192-4dcf-9c00-045d5348bd62" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2019.png"><img style="width:669px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2019.png"/></a><figcaption>오른쪽으로 갈수록 손실이 커지고, 처음에는 슬슬 커지다가 그래프가 급격하게 가파라집니다. h(x)가 0에서 멀어질수록 못하고 있는 거라서, 손실을 엄청나게 키우는 겁니다.</figcaption></figure><p id="feb30c76-e8bf-48eb-a849-d9611844881d" class="">
+</p><figure id="4a3bc9ee-d8d6-49d9-81e0-2d4ec7feeb01" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2013.png"><img style="width:736px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2013.png"/></a></figure><p id="7e8a04f9-e8fb-4886-b933-b4b717b5345a" class="">실제 아웃풋 y<em>y</em>가 1인 경우에는 예측값이 1에 가까울수록 손실이 0에 가깝고, 멀어질수록 손실이 가파르게 커집니다. 예측값이 1에서 멀어질수록 더 틀린 거니까 더 많은 페널티를 주는 거죠.</p><p id="dda33cd6-8e74-440c-8179-3498d9fdb0af" class="">실제 아웃풋 y<em>y</em>가 0인 경우에는 정반대입니다. 예측값이 0에 가까울수록 손실이 0에 가깝고, 멀어질수록 손실이 가파르게 커집니다. 예측값이 0에서 멀어질수록 더 틀린 거니까 더 많은 페널티를 주는 거죠.</p><figure id="385ca155-b7c1-4ed6-8930-77e7fef795d1" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2020.png"><img style="width:575px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2020.png"/></a></figure><h3 id="39125ed2-c538-40b4-b7ad-d05d480afa59" class="">y가 1일때</h3><figure id="24ae3a31-dd3d-412c-a22c-0a65fb48bb39" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2021.png"><img style="width:554px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2021.png"/></a></figure><h3 id="2f261912-6dce-4bdc-a230-e0d5a56c21b4" class="">y가 0일때</h3><figure id="ddeecbb7-1377-4d36-99c7-a1c0dca9a406" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2022.png"><img style="width:568px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2022.png"/></a></figure><figure id="c4fb8b04-e551-4f2c-ad24-e5f6d00e440c" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2023.png"><img style="width:563px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2023.png"/></a><figcaption>로지스틱 회귀의 손실 함수를 쓸 때는 보통 이 한 줄 방식을 사용합니다.</figcaption></figure><figure id="00bc538c-dfba-4066-b605-096fdb048b7c" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2024.png"><img style="width:483px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2024.png"/></a><figcaption>로그 손실 함수가 있죠? 로그 손실을 이용해서 우리의 i번째 데이터에 대한 손실을 구하는 겁니다.</figcaption></figure><p id="fad634e3-1f33-4243-a369-2958423ba071" class="">
+</p><figure id="2606edb6-bb97-4155-98d9-81588f242c40" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2025.png"><img style="width:518px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2025.png"/></a><figcaption>그런데 i는 뭘까요? 그게 이 시그마에서 나오는 건데요. 시그마 밑에 i=1이라고 되어 있고, 위에는 m이라고 되어 있습니다. m은 학습 데이터 개수죠. 여기 오른쪽 부분에서 i에 1을 대입하고, 2를 대입하고, 3을 대입하고... 이런 식으로 i에 1부터 m까지 순서대로 대입을 해서 계산하고, 계산된 결과를 모두 더하는 겁니다. 다 더하는 것까지가 이 시그마의 역할입니다</figcaption></figure><figure id="0707da6d-1352-4d06-bd91-fba5c60db878" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2026.png"><img style="width:530px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2026.png"/></a><figcaption>. 마지막에 m으로 나눠 주면 평균을 구할 수 있는 거고요.</figcaption></figure><h3 id="ae8028b8-7268-4d09-8058-792e8c5c46d3" class="">간단하게 요약하자면, 모든 학습 데이터에 대해서 로그 손실을 계산하고, 평균을 내는 겁니다. 그걸로 가설 함수를 평가하는 거죠.</h3><figure id="9d76b0b6-4d73-43f3-9d9c-0624dc1a6284" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2027.png"><img style="width:504px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2027.png"/></a><figcaption>가설 함수는 세타 값들을 어떻게 설정하느냐에 따라 바뀐다. 어떤 세타 값들을 설정하느냐에 따라 학습 데이터의 손실이 달라지는 겁니다. 그래서 손실 함수의 인풋은 세타인 거죠.</figcaption></figure><h3 id="31dff7e0-c783-42d6-8e4f-204f06341ec2" class=""><strong><strong>로그 손실 대입</strong></strong></h3><figure id="3c91496e-31b4-494b-a16e-a49ec5451134" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2028.png"><img style="width:677px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2028.png"/></a></figure><p id="71d01451-3a42-4c91-b09d-702e8bc47164" class="">
+</p><p id="7b1b29d1-bb9c-48c9-99de-d3274aa1a041" class="">
+</p><h3 id="1c46b316-b952-486a-9686-807f0ca1866c" class="">로지스틱 회귀 경사 하강법 </h3><figure id="7bce3359-47a9-4ccc-a5f3-e4cd32791d79" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2029.png"><img style="width:529px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2029.png"/></a></figure><figure id="7941e536-3693-4464-bd77-c496d251aacd" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2030.png"><img style="width:620px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2030.png"/></a><figcaption>처음에는 세타 값들을 모두 0으로 지정하거나 모두 랜덤하게 지정합니다. 어디선가는 시작을 해야 되니까요. 그러면 현재 세타 값들에 대한 손실, 즉 현재 가설 함수에 대한 손실을 계산할 수 있는데요. 여기서부터 시작해서, 세타를 조금씩 조율하면서 손실을 계속 줄여나가야 하는 겁니다.</figcaption></figure><p id="ad3518ca-0f1f-4e47-8c57-70add1ca73e5" class="">
+</p><h3 id="88ec6d75-2d6c-4060-8bad-bf8ddf4de0c2" class="">편미분</h3><figure id="dccdf7f2-77e7-477e-b0d5-87e67938a24c" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2031.png"><img style="width:599px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2031.png"/></a><figcaption>손실 함수를 세타0에 대해서 편미분하고, 그 결과에 학습률 알파를 곱합니다. 그리고 그 결과를 기존 <em>θ</em>0에서 빼면 되는 겁니다. <em>θ </em>1이랑 똑같이 <em>θ</em>2도 업데이트하면 되는 거죠. 이렇게 모든 세타값들을 업데이트하면, 경사 하강을 <strong>한 번 </strong>했다고 할 수 있습니다. 그리고 이걸 충분히 반복하면 손실을 최소화할 수 있는 거죠.</figcaption></figure><figure id="72225d99-a874-4b24-8f82-34500939892c" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2032.png"><img style="width:611px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2032.png"/></a><figcaption>이건 선형 회귀든 로지스틱 회귀든 똑같이 사용할 수 있는데요. 차이점은 이 손실 함수 J가 다르다는 것입니다. 지금 우리는 로지스틱 회귀를 하는 거니까, J에 로지스틱 회귀의 손실 함수를 대입해 봅시다.</figcaption></figure><figure id="1efd5c99-95bc-444c-99ab-ef7e540bdf45" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2033.png"><img style="width:520px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2033.png"/></a><figcaption>세타값이 많아지면 식도 계속 늘어나니까, 일반화해서 이렇게 표현할게요. <em>j</em>에 0을 넣어서 세타0을 업데이트 하고, j에 1을 넣어서 세타1을 업데이트 하고, j에 2를 넣어서 세타2를 업데이트 하고... 이런 식으로 하면 됩니다.</figcaption></figure><figure id="0082f230-1c47-47e8-b58e-a8ca0bfc1a0e" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2034.png"><img style="width:505px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2034.png"/></a><figcaption>이렇게 선형 회귀랑 거의 똑같은데, 여기서 유일하게 다른 건 이 가설 함수 h입니다. 선형 회귀에서의 가설 함수는 그냥 일차 함수였는데, 로지스틱 회귀에서의 가설 함수는 시그모이드 함수죠? <em>h</em>에 이 시그모이드 함수를 대입해서 각 세타값을 업데이트하면 되는 겁니다.</figcaption></figure><h3 id="f0cb4289-4a9a-410e-ae94-bdd1b1ae4afe" class=""><strong><strong>입력 변수와 파라미터 표현</strong></strong></h3><figure id="40d0c296-815e-487a-a47c-67343bc90bdf" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2035.png"><img style="width:477px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2035.png"/></a></figure><h3 id="7a8bf4d3-dd78-4d0f-ba35-bc9decfb8c29" class=""><strong><strong>모든 데이터 예측 값</strong></strong></h3><figure id="08b30d19-faba-4731-a326-07717e61607b" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2036.png"><img style="width:768px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2036.png"/></a></figure><p id="daf66eb0-c551-491d-ba6d-b17b8ce4aba5" class="">
+</p><p id="9a2ab60f-64b2-4518-bff2-1bad377135c1" class="">로지스틱 회귀는 선형 회귀랑 가설 함수 <em>hθ</em>(<em>x</em>) 가 다르잖아요?</p><p id="350f0f4e-71fb-47aa-8aad-096db308a6ad" class="">위에서 계산한 모든 결과 값을 시그모이드 함수에 넣어줘야 되는데요. 계산한 <em>Xθ</em>의 모든 원소를 시그모이드 함수에 넣는다는 의미로 이렇게 표현할게요.</p><div id="3ebde7c7-5bff-49a1-9a92-f40c43353110" class="column-list"><div id="14907765-bd3c-4974-b449-2d8e979052c9" style="width:50%" class="column"><figure id="c371f6d3-cbf2-4330-93f9-73bbb7a384b3" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2037.png"><img style="width:204px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2037.png"/></a></figure></div><div id="fadbffe4-9dfb-4cc9-b1b2-250b1cb583d1" style="width:50%" class="column"><figure id="d09e86f6-476b-4dc9-af5f-d8f1d25a2f51" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2038.png"><img style="width:243px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2038.png"/></a></figure></div></div><h3 id="506596a3-3292-4d7d-85e8-522b74761149" class=""><strong><strong>예측 오차</strong></strong></h3><p id="0931ab71-1489-41ff-8bc4-2b72841052f6" class="">
+</p><figure id="60f26cf4-11be-4187-b775-f54b9b3a8895" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2039.png"><img style="width:697px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2039.png"/></a></figure><p id="8876c9f9-b0be-4684-8391-42f67db40256" class="">모든 예측 값들과 목표 변수의 차이를 간단하게 표현할 수 있는 거죠. 뒤에서는 표현하기 쉽게 이 값을 error라고 부르겠습니다.</p><figure id="644fc7eb-32ed-48e4-ba9f-040606f80500" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2040.png"><img style="width:691px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2040.png"/></a></figure><p id="2723cc7a-b6e1-499a-91e9-60b9bd9993a4" class="">그렇기 때문에 경사 하강법도 다중 선형 회귀를 할 때랑 똑같이 표현해줄 수 있습니다.</p><p id="f8a9889e-e3be-4eb2-95ea-e87c83bb630f" class="">위에서 했던 거처럼 입력 변수, 파라미터, 예측값 오차를 이렇게 표현할 때:</p><figure id="10c29ae0-0005-4824-bfbd-fafea7d3b7c7" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2041.png"><img style="width:623px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2041.png"/></a></figure><figure id="8c647e04-1a74-413d-a3b7-41e448dee8db" class="image"><a href="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2042.png"><img style="width:291px" src="%E1%84%85%E1%85%A9%E1%84%8C%E1%85%B5%E1%84%89%E1%85%B3%E1%84%90%E1%85%B5%E1%86%A8%20%E1%84%92%E1%85%AC%E1%84%80%E1%85%B1(Logistic%20Regression)%2090fd30d38b454aa9b707f8a0dc263241/Untitled%2042.png"/></a></figure><p id="46990690-f7c4-40dc-9bab-f392513bc145" class="">
+</p></div></article></body></html>
